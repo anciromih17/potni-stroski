@@ -1,0 +1,22 @@
+{
+    "name": "potni-stroski-react",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "jspdf": "^2.5.2",
+        "jspdf-autotable": "^3.8.4",
+        "pdfjs-dist": "^3.9.179",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "xlsx": "^0.18.5"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react": "^4.0.0",
+        "vite": "^5.1.0"
+    }
+}
