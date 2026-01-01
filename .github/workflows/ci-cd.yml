@@ -134,6 +134,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/potni-stroski-frontend:latest
+          build-args: |
+            VITE_API_URL=https://potni-stroski-backend.onrender.com
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-frontend:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-frontend:buildcache,mode=max
 
