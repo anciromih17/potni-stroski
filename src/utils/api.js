@@ -1,4 +1,4 @@
-const envServer = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_BACKEND_URL : undefined;
+const envServer = import.meta.env.VITE_API_URL;
 const defaultServer = 'http://localhost:5000';
 
 export async function uploadReportToServer({ blob, filename, folder, totalValue, totalKm, serverUrl = '' }) {
