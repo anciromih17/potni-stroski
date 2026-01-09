@@ -232,7 +232,6 @@ export default function App() {
     return (
         <div className="card">
             <h1>Seštevek potnih nalogov</h1>
-            <a href='./docs/index.html'>Preberi si opis programa!</a>
             <p className="hint">Izberi mapo ali posamezen PDF. Za najboljšo izkušnjo uporabi Chrome/Edge.</p>
 
             <div className="controls">
