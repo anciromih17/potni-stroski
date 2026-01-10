@@ -232,8 +232,8 @@ jobs:
           tags: |
             ${{ secrets. DOCKER_USERNAME }}/potni-stroski-backend:prod
             ${{ secrets.DOCKER_USERNAME }}/potni-stroski-backend:latest
-            cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-backend: buildcache
-            cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-backend: buildcache,mode=max
+            cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-backend:buildcache
+            cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-backend:buildcache,mode=max
 
   # DEPLOY FAZA - DEVELOPMENT
   deploy-dev:
