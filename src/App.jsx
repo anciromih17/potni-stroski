@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import { extractReportDataFromPdfText } from './helpers';
 import { exportReportToPdf } from './utils/exportPdf';
+import { generatePdfBlob } from './utils/generatePdfBlob';
+import { uploadReportToServer } from './utils/api';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/legacy/build/pdf.worker.min.js',
@@ -198,6 +200,35 @@ export default function App() {
         }
     }
 
+    const filteredItems = items;
+
+    async function handleSaveReportToServer() {
+        if (!filteredItems.length) {
+            alert('Ni podatkov za shranjevanje.');
+            return;
+        }
+        const rows = filteredItems.map(r => ({
+            fileName: r.file,
+            start_dt: r.start_dt,
+            end_dt: r.end_dt,
+            route: r.route,
+            kilometers: r.mid_value || r.kilometers || 0,
+            value: r.value || 0
+        }));
+        const title = `Seznam potnih nalogov - ${folderName || '—'}`;
+        const filename = `potni_nalogi_${(folderName || 'export')}_${new Date().toISOString().replace(/[:.]/g, '')}.pdf`;
+        try {
+            const blob = await generatePdfBlob(rows, { title, fileName: filename });
+            const totalValue = rows.reduce((s, r) => s + (Number(r.value) || 0), 0);
+            const totalKm = rows.reduce((s, r) => s + (Number(r.kilometers) || 0), 0);
+            const result = await uploadReportToServer({ blob, filename, folder: folderName, totalValue, totalKm });
+            alert('Report saved with id: ' + (result && result.report && result.report.id));
+        } catch (err) {
+            console.error('Save report failed', err);
+            alert('Napaka pri shranjevanju na strežnik: ' + (err.message || err));
+        }
+    }
+
     return (
         <div className="card">
             <h1>Seštevek potnih nalogov</h1>
@@ -275,6 +306,7 @@ export default function App() {
 
             <div style={{ marginTop: 12 }}>
                 <button className="btn" onClick={exportPdf} disabled={!items.length || processing}>⬇️ Export v PDF (A4)</button>
+                <button className="btn" onClick={handleSaveReportToServer} disabled={!items.length || processing} style={{ marginLeft: 8 }}>💾 Shrani na strežnik</button>
                 {processing && <span className="small" style={{ marginLeft: 12 }}>Obdelujem …</span>}
             </div>
 
