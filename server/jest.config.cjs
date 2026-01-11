@@ -2,5 +2,6 @@ module.exports = {
     testEnvironment: 'node',
     roots: ['<rootDir>/src'],
     coverageDirectory: 'coverage',
-    collectCoverageFrom: ['src/**/*.js']
+    collectCoverageFrom: ['src/**/*.js'],
+    coverageReporters: ['text', 'lcov'],
 };
