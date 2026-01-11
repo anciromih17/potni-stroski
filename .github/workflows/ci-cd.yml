@@ -160,25 +160,33 @@ jobs:
           SONAR_TOKEN: ${{ secrets. SONAR_TOKEN }}
         with:
           args: "-Dsonar.projectKey=anciromih17_potni-stroski -Dsonar.organization=anciromih17 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info,server/coverage/lcov.info -Dsonar.sources=src,server/src -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/*.test.js,**/*.test.jsx"
+      - name: Upload SonarCloud report
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonarcloud-report
+          path: .scannerwork/report-task.txt
 
   # QUALITY GATE CHECK
   quality-gate:
     name: SonarCloud Quality Gate Check
     runs-on: ubuntu-latest
     needs: sonarcloud
-    if: github. event_name == 'push'
+    if: github.event_name == 'push'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download SonarCloud report
+        uses: actions/download-artifact@v4
         with:
-          fetch-depth: 0
+          name: sonarcloud-report
+          path: .scannerwork
 
       - name: Wait for Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          scanMetadataReportFile: .scannerwork/report-task.txt
 
   # GITHUB PAGES DEPLOYMENT
   deploy-pages:
