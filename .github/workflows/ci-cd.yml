@@ -160,11 +160,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar. projectKey=anciromih17_potni-stroski
+            -Dsonar.projectKey=anciromih17_potni-stroski
             -Dsonar.organization=anciromih17
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info,server/coverage/lcov.info
             -Dsonar.sources=src,server/src
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/*.test.js,**/*.test.jsx
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/*.test.js,**/*. test.jsx
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
 
