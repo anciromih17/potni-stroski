@@ -12,10 +12,14 @@
  
 - Dockerfile ni pokazal nobenih težav.
 
+<img width="1646" height="398" alt="image" src="https://github.com/user-attachments/assets/a7e542c5-0a3a-441b-a47f-4057ae131d99" />
+
 **CODE SCANNING**
 - Vsega skupaj 12 težav(3 high, 9 medium)
   - 3x missing rate limit na src/index.js:
     - Za rešitev uporabili predlog: A rate-limiting middleware should be used to prevent attacks.
+<img width="563" height="300" alt="image" src="https://github.com/user-attachments/assets/56bd9b9a-6a08-4020-a1e3-44d39d440c8d" />
+
   - 9x Workflow does not contain permissions - nimo popravljali
 
  **DATADOG**
@@ -25,6 +29,10 @@
  - Najdaljša koraka v pipeline-u sta Build & Push Docker in SonarCloude Code Analysis.
    -  Build & Push Docker je za cca 30s daljši na production branch-u
    -  Prav tako se backend testi na production branchu dlje izvajajo
+
+<img width="1065" height="277" alt="image" src="https://github.com/user-attachments/assets/4dea83d2-7b20-4ae0-85c4-174d4af67c11" />
+
+<img width="1676" height="311" alt="image" src="https://github.com/user-attachments/assets/e909203b-2d16-4981-9058-7f0ee034f6d7" />
   
 **Kaj bi še lahko optimizirali?**
 1. Optimiziranje testiranja - v trenutnem workflow‑u se testi in npm install izvajajo večkrat
