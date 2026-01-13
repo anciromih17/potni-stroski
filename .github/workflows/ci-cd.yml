@@ -321,7 +321,7 @@ jobs:
     steps:
       - name: Trigger Render deploy (backend)
         run: |
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
+          curl -X POST "${{ secrets. RENDER_DEPLOY_HOOK_BACKEND }}"
 
       - name: Trigger Render deploy (frontend)
         run: |
