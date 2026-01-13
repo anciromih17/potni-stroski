@@ -2,10 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
+const rateLimit = require('express-rate-limit');
 const { pool, init } = require('./db');
 
 const upload = multer();
 const app = express();
+
+const reportsLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs for report-related endpoints
+});
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +25,7 @@ const PORT = process.env.PORT || 5000;
 
         app.get('/api/health', (_, res) => res.json({ ok: true }));
 
-        app.post('/api/reports', upload.single('file'), async (req, res) => {
+        app.post('/api/reports', reportsLimiter, upload.single('file'), async (req, res) => {
             try {
                 if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
@@ -45,7 +51,7 @@ const PORT = process.env.PORT || 5000;
             }
         });
 
-        app.get('/api/reports', async (req, res) => {
+        app.get('/api/reports', reportsLimiter, async (req, res) => {
             try {
                 const q = `SELECT id, filename, folder, total_value, total_km, created_at FROM reports ORDER BY created_at DESC LIMIT 200;`;
                 const result = await pool.query(q);
@@ -56,7 +62,7 @@ const PORT = process.env.PORT || 5000;
             }
         });
 
-        app.get('/api/reports/:id/file', async (req, res) => {
+        app.get('/api/reports/:id/file', reportsLimiter, async (req, res) => {
             try {
                 const id = Number(req.params.id);
                 const q = `SELECT filename, pdf FROM reports WHERE id = $1;`;
