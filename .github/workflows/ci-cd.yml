@@ -176,7 +176,7 @@ jobs:
         run: |
           QUALITY_GATE_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
             "https://sonarcloud.io/api/qualitygates/project_status?projectKey=anciromih17_potni-stroski&branch=main" \
-            | jq -r '.projectStatus. status')
+            | jq -r '.projectStatus.status')
 
           if [ "$QUALITY_GATE_STATUS" != "OK" ]; then
             exit 1
