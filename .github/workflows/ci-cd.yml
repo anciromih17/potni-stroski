@@ -114,7 +114,7 @@ jobs:
     name: SonarCloud Code Analysis
     runs-on: ubuntu-latest
     needs: [frontend-test, backend-test, build]
-    if: github. event_name == 'push' || github.event_name == 'pull_request'
+    if: github. ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'pull_request')
 
     steps:
       - name: Checkout repository
@@ -165,6 +165,23 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets. SONAR_TOKEN }}
 
+  # QUALITY GATE CHECK - PRODUCTION
+  check-quality-gate-prod:
+    name: Verify Quality Gate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/production' && github.event_name == 'push'
+
+    steps:
+      - name: Check Main Branch Quality Gate Status
+        run: |
+          QUALITY_GATE_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+            "https://sonarcloud.io/api/qualitygates/project_status?projectKey=anciromih17_potni-stroski&branch=main" \
+            | jq -r '.projectStatus. status')
+
+          if [ "$QUALITY_GATE_STATUS" != "OK" ]; then
+            exit 1
+          fi
+
   # GITHUB PAGES DEPLOYMENT
   deploy-pages:
     name: Deploy to GitHub Pages
@@ -179,7 +196,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps. deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
@@ -217,7 +234,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets. DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push frontend Docker image (dev)
@@ -228,7 +245,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/potni-stroski-frontend:dev
           build-args: |
-            VITE_API_URL=https://potni-stroski-backend. onrender.com
+            VITE_API_URL=https://potni-stroski-backend.onrender. com
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-frontend:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/potni-stroski-frontend:buildcache,mode=max
 
@@ -246,7 +263,7 @@ jobs:
   docker-prod:
     name: Build & Push Docker (Production)
     runs-on: ubuntu-latest
-    needs: [build, sonarcloud]
+    needs: [build, check-quality-gate-prod]
     if: github.ref == 'refs/heads/production' && github.event_name == 'push'
 
     environment:
@@ -262,7 +279,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets. DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push frontend Docker image (prod)
@@ -304,7 +321,7 @@ jobs:
     steps:
       - name: Trigger Render deploy (backend)
         run: |
-          curl -X POST "${{ secrets. RENDER_DEPLOY_HOOK_BACKEND }}"
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
 
       - name: Trigger Render deploy (frontend)
         run: |
@@ -314,7 +331,7 @@ jobs:
   deploy-prod:
     name: Deploy to Render (Production)
     runs-on: ubuntu-latest
-    needs: [docker-prod, sonarcloud]
+    needs: [docker-prod, check-quality-gate-prod]
     if: github.ref == 'refs/heads/production' && github.event_name == 'push'
 
     environment:
@@ -327,4 +344,4 @@ jobs:
 
       - name: Trigger Render deploy (frontend)
         run: |
-          curl -X POST "${{ secrets. RENDER_DEPLOY_HOOK_FRONTEND }}"
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}"
