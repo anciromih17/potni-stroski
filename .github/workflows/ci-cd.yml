@@ -15,6 +15,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Datadog CI
+        uses: datadog/datadog-ci@v2
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_SITE: datadoghq.eu
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -50,6 +56,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Datadog CI
+        uses: datadog/datadog-ci@v2
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_SITE: datadoghq.eu
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -83,6 +95,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Datadog CI
+        uses: datadog/datadog-ci@v2
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_SITE: datadoghq.eu
 
       - name: Setup Node
         uses: actions/setup-node@v4
