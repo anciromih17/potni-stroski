@@ -9,7 +9,7 @@
         "test": "vitest --run --coverage"
     },
     "dependencies": {
-        "jspdf": "^2.5.2",
+        "jspdf": "^4.1.0",
         "jspdf-autotable": "^3.8.4",
         "pdfjs-dist": "^3.9.179",
         "react": "^18.2.0",
